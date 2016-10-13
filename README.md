@@ -1,9 +1,9 @@
 # PythonKill
-----------
+
 This Python program will check for a designated list of applications per loop cycle and kill them forcefully if detected as alive.
 
--**PythonKill** is only supported under Windows.
--**PythonKill** uses Python 3.52
+- **PythonKill** is only supported under Windows.
+- **PythonKill** uses Python 3.52
 
 # How to use:
 
