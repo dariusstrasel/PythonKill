@@ -1,12 +1,16 @@
-import sys, traceback, os, time, datetime
+import sys, logging, traceback, os, time, datetime
+from processListConfig import PROCESS_LIST
+from processListConfig import SECONDS_TO_LOOP_FOR
 
-#The following list must contain the full process name of the intended application to kill.
-processList = []
+# The processList is imported from the processListConfig.py file
+# The processListConfig file should contain the full process name, such as:
+# defaultList = ["chromedriver.exe"]
+
 
 
 def pkill (process_name):
     '''This function will pass the input parameter to os import library in order to execute a task kill command.'''
-    #print("pkill")
+    logging.debug('pkill')
     print("Attempting process kill on: " + str(datetime.datetime.now().time()))
     try:
         killed = os.system('taskkill /IM ' + process_name + ' /F')
@@ -17,20 +21,19 @@ def pkill (process_name):
         
 def checkAppList():
     '''This function will check each item in the process list by executing isAppAlive() on each item, and return True or False.'''
-    #print("checkAppList")
-    for item in processList:
+    logging.debug("checkAppList")
+    for process_to_kill in PROCESS_LIST:
         #print("item: " + item)
-        if isAppAlive(item) == True:
-            #print(True)
-            pkill(item)
-        #print(False)
+        if isAppAlive(process_to_kill) == True:
+            pkill(process_to_kill)
     
     
 def isAppAlive (app):
     '''This function will take an input parameter and call 'tasklist' cmd function to determine if task is currently active within widnows fucntion. '''
-    #print("isAppAlive")
+    logging.debug("isAppAlive")
     app = os.system('tasklist | findstr ' + '"' + app + '"')
-    #print(type(app))
+    
+    logging.debug(type(app))
     if app == 1:
         return False
     return True
@@ -38,22 +41,26 @@ def isAppAlive (app):
     
 def loopAliveApps(inputSeconds):
     '''This fucntion will execute the checkapplist() fucntion and wait the passed paramater amount of time.'''
-    #print("loopAliveApps")
+    logging.debug("loopAliveApps")
+
     inputSeconds = int(inputSeconds)
-    while True:
+    if inputSeconds != 0:
+        while True:
+        	checkAppList()
+        	#print("Sleeping for " + str(inputSeconds) + " seconds.")
+        	print(".")
+        	time.sleep(inputSeconds)
+    else:
         checkAppList()
-        #print("Sleeping for " + str(inputSeconds) + " seconds.")
-        print(".")
-        time.sleep(inputSeconds)
 
         
 def main(time):
     '''This function will loop through process skill script for designated time.'''
-    #print("main")
+    logging.debug("main")
     time = int(time)
     print("Activating 'process kill program'. Will check for apps every " + str(time) + ' seconds. ')
-    print("Checking for:\n " + str(processList))
+    print("Checking for:\n " + str(PROCESS_LIST))
     loopAliveApps(time)
 
-#loopAliveApps(10)    
-main(10)    
+   
+main(SECONDS_TO_LOOP_FOR)    
